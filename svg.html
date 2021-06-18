@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>SVG generation - Penrose tiling</title>
+    <style>
+        svg {
+            border:  1px solid black;
+        }
+    </style>
+</head>
+<body>
+    <h1>Penrose tiling<h1>
+
+    <div id="figure"></div>
+
+    <script language="javascript">
+        const svgns = 'http://www.w3.org/2000/svg';
+        const figureDiv = document.getElementById('figure');
+        const svgNode = document.createElementNS(svgns, 'svg');
+        svgNode.setAttributeNS(null, 'height', '750');
+        svgNode.setAttributeNS(null, 'width', '750');
+        svgNode.setAttributeNS(null, 'viewBox', '0 0 750 750');
+
+        figureDiv.appendChild(svgNode);
+
+        // https://en.wikipedia.org/wiki/Penrose_tiling#/media/File:Kite_Dart.svg
+
+        function to_radians(degrees) {
+            return degrees * (Math.PI / 180);
+        }
+
+        const phi = (1.0 + Math.sqrt(5.0))/2.0;
+        // console.log(phi);
+        
+        function make_kite(x, y, size) {
+            const longside = size * phi;
+            const shortside = size * 1;
+
+            const a  = (longside * Math.cos(to_radians(36)));
+            const o1 = (longside * Math.sin(to_radians(36)));
+            const o2 = (shortside * Math.sin(to_radians(18)));
+
+            const points = `${x},${y} 
+                            ${x + a},${y - o1} 
+                            ${x + a + o2}, ${y} 
+                            ${x + a},${y + o1} 
+                            ${x},${y}`
+
+            console.log(points)
+
+            const kite = document.createElementNS(svgns, 'polygon'); 
+            kite.setAttributeNS(null, 'points', points);  
+            kite.setAttributeNS(null, 'fill', 'red');
+            return kite;          
+        }
+
+        function get_kite_width(size) {
+            return (size * phi * Math.cos(36)) + (size * Math.cos(18))
+        }
+
+        function make_dart(x, y, size) {
+            const longside = size * phi;
+            const shortside = size * 1;
+
+            const h = shortside * Math.sin(to_radians(72));
+            const w = shortside * Math.cos(to_radians(72));
+            const w2 = longside * Math.cos(to_radians(36));
+
+            const points = `${x},${y} 
+                            ${x + w},${y + h}
+                            ${x},${y + 2*h}
+                            ${x + w2},${y + h}
+                            ${x},${y}`
+
+            console.log(points)
+
+            const dart = document.createElementNS(svgns, 'polygon'); 
+            dart.setAttributeNS(null, 'points', points);  
+            dart.setAttributeNS(null, 'fill', 'green');
+            return dart;          
+        }
+
+        // add a kite and a dart
+        svgNode.appendChild(make_kite(200, 200, 150));
+        svgNode.appendChild(make_dart(396.35254915624216,57.341522555726954   , 150));
+    </script>
+</body>
+</html>
